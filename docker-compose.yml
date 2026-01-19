@@ -1,0 +1,30 @@
+version: "3.9"
+
+services:
+
+  api:
+    build: .
+    container_name: veiculos-api
+    ports:
+      - "8080:8080"
+    depends_on:
+      - redis
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      SPRING_DATASOURCE_URL: jdbc:h2:mem:veiculosdb
+      SPRING_REDIS_HOST: redis
+      SPRING_REDIS_PORT: 6379
+    networks:
+      - veiculos-net
+
+  redis:
+    image: redis:7.2-alpine
+    container_name: redis
+    ports:
+      - "6379:6379"
+    networks:
+      - veiculos-net
+
+networks:
+  veiculos-net:
+    driver: bridge
