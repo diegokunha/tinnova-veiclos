@@ -1,23 +1,23 @@
-# ? API de VeÌculos ? Desafio TÈcnico Tinnova
+# API de Ve√≠culos ? Desafio T√©cnico Tinnova
 
-Este projeto foi desenvolvido como parte do **desafio tÈcnico da Tinnova**, utilizando **Java 17**, **Spring Boot 3**, **JWT**, **OpenAPI**, **JUnit/Mockito** e aplicando princÌpios de **SOLID** e **Clean Code**.
+Este projeto foi desenvolvido como parte do **desafio t√©cnico da Tinnova**, utilizando **Java 17**, **Spring Boot 3**, **JWT**, **OpenAPI**, **JUnit/Mockito** e aplicando princ√≠pios de **SOLID** e **Clean Code**.
 
 ---
 
-## ? Objetivo
+## Objetivo
 
-Disponibilizar uma API REST para gerenciamento de veÌculos, com:
+Disponibilizar uma API REST para gerenciamento de ve√≠culos, com:
 
 * CRUD completo
-* Filtros avanÁados
-* RelatÛrios
-* AutenticaÁ„o e autorizaÁ„o via JWT
-* DocumentaÁ„o OpenAPI (Swagger)
+* Filtros avan√ßados
+* Relat√≥rios
+* Autentica√ß√£o e autoriza√ß√£o via JWT
+* Documenta√ß√£o OpenAPI (Swagger)
 * Testes automatizados com cobertura ? 75%
 
 ---
 
-## ?? Tecnologias Utilizadas
+## Tecnologias Utilizadas
 
 * **Java 17**
 * **Spring Boot 3**
@@ -34,7 +34,7 @@ Disponibilizar uma API REST para gerenciamento de veÌculos, com:
 
 ---
 
-## ? Arquitetura
+## Arquitetura
 
 O projeto segue uma arquitetura em camadas:
 
@@ -48,16 +48,16 @@ Principais conceitos aplicados:
 
 * SOLID
 * Clean Code
-* DTOs para entrada e saÌda
+* DTOs para entrada e sa√≠da
 * Soft Delete
-* SeparaÁ„o de responsabilidades
+* Separa√ß√£o de responsabilidades
 
 ---
 
-## ? SeguranÁa (JWT)
+## Seguran√ßa (JWT)
 
-* AutenticaÁ„o via `/auth/login`
-* AutorizaÁ„o baseada em roles:
+* Autentica√ß√£o via `/auth/login`
+* Autoriza√ß√£o baseada em roles:
 
     * `USER`: leitura
     * `ADMIN`: escrita (POST, PUT, PATCH, DELETE)
@@ -70,11 +70,11 @@ Authorization: Bearer <token>
 
 ---
 
-## ? DocumentaÁ„o da API (Swagger)
+## Documenta√ß√£o da API (Swagger)
 
-A API È totalmente documentada com **OpenAPI 3**.
+A API √© totalmente documentada com **OpenAPI 3**.
 
-### ? Acesso
+### Acesso
 
 ```
 http://localhost:8080/swagger-ui.html
@@ -82,25 +82,25 @@ http://localhost:8080/swagger-ui.html
 
 ---
 
-### ? Prints do Swagger
+### Prints do Swagger
 
-#### ? Tela inicial da documentaÁ„o
+#### Tela inicial da documenta√ß√£o
 
 ![Swagger Home](docs/swagger/swagger-home.png)
 
-#### ? Endpoint de Login (JWT)
+#### Endpoint de Login (JWT)
 
 ![Swagger Login](docs/swagger/swagger-login.png)
 
-#### ? Cadastro de VeÌculo (ADMIN)
+#### Cadastro de Ve√≠culo (ADMIN)
 
 ![Swagger Post Veiculo](docs/swagger/swagger-post-veiculo.png)
 
-#### ? RelatÛrio por Marca
+#### Relat√≥rio por Marca
 
 ![Swagger Relatorio](docs/swagger/swagger-relatorio-marca.png)
 
-> ? **ObservaÁ„o:**
+ **Observa√ß√£o:**
 > Os arquivos de imagem devem ser colocados em:
 >
 > ```
@@ -109,9 +109,9 @@ http://localhost:8080/swagger-ui.html
 
 ---
 
-## ? Endpoints Principais
+## Endpoints Principais
 
-### VeÌculos
+### Ve√≠culos
 
 * `GET /veiculos`
 * `GET /veiculos/{id}`
@@ -121,18 +121,18 @@ http://localhost:8080/swagger-ui.html
 * `DELETE /veiculos/{id}` (ADMIN ? soft delete)
 * `GET /veiculos/relatorios/por-marca`
 
-### AutenticaÁ„o
+### Autentica√ß√£o
 
 * `POST /auth/login`
 
 ---
 
-## ? Testes e Cobertura
+## Testes e Cobertura
 
-* Testes unit·rios
+* Testes unit√°rios
 * Testes de controller
-* Testes de integraÁ„o com JWT
-* Banco H2 em memÛria
+* Testes de integra√ß√£o com JWT
+* Banco H2 em mem√≥ria
 * Cobertura com **JaCoCo ? 75%**
 
 ### Executar testes
@@ -141,7 +141,7 @@ http://localhost:8080/swagger-ui.html
 mvn clean verify
 ```
 
-### RelatÛrio de cobertura
+### Relat√≥rio de cobertura
 
 ```
 target/site/jacoco/index.html
@@ -149,9 +149,9 @@ target/site/jacoco/index.html
 
 ---
 
-## ? Redis (Cache)
+## Redis (Cache)
 
-O Redis È utilizado para cache de dados externos (ex: cotaÁ„o do dÛlar).
+O Redis √© utilizado para cache de dados externos (ex: cota√ß√£o do d√≥lar).
 
 ### Subir Redis com Docker
 
@@ -161,13 +161,13 @@ docker run -d --name redis -p 6379:6379 redis:7-alpine
 
 ---
 
-## ?? Executando o Projeto
+## Executando o Projeto
 
 ```bash
 mvn spring-boot:run
 ```
 
-A aplicaÁ„o estar· disponÌvel em:
+A aplica√ß√£o estar√° dispon√≠vel em:
 
 ```
 http://localhost:8080
@@ -175,17 +175,17 @@ http://localhost:8080
 
 ---
 
-## ? Autor
+## Autor
 
 **Diego Cunha**
 Analista Desenvolvedor Java
 
-Projeto desenvolvido com foco em boas pr·ticas, clareza de cÛdigo e padrıes exigidos em ambientes corporativos.
+Projeto desenvolvido com foco em boas pr√°ticas, clareza de c√≥digo e padr√µes exigidos em ambientes corporativos.
 
 ---
 
-## ? Status do Projeto
+## Status do Projeto
 
-? Desafio tÈcnico finalizado
+? Desafio t√©cnico finalizado
 ? Todos os requisitos atendidos
-? Pronto para avaliaÁ„o
+? Pronto para avalia√ß√£o
