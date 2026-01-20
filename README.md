@@ -39,7 +39,7 @@ Disponibilizar uma API REST para gerenciamento de veículos, com:
 O projeto segue uma arquitetura em camadas:
 
 ```
-controller  ?  service  ?  repository
+controller  ->  service  ->  repository
                  ?
                domain
 ```
