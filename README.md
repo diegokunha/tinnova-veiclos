@@ -1,264 +1,191 @@
-# Projeto API de Veículos
+# ? API de Veículos ? Desafio Técnico Tinnova
 
-Este projeto implementa **exatamente** o desafio técnico proposto pela **Tinnova**, consistindo em uma **API REST de gerenciamento de veículos**, com foco em requisitos de negócio, segurança, testes automatizados, qualidade de código e aderência às boas práticas solicitadas no desafio.
-
----
-
-## ? Arquitetura (Aderente ao Desafio Tinnova)
-
-Organização baseada em camadas:
-
-```
-com.tinnova.veiculos
-??? VeiculosApplication.java
-??? config
-?   ??? OpenApiConfig.java
-?   ??? SecurityConfig.java
-?   ??? RedisConfig.java
-??? controller
-?   ??? VeiculoController.java
-??? dto
-?   ??? VeiculoRequestDTO.java
-?   ??? VeiculoResponseDTO.java
-?   ??? ErrorResponseDTO.java
-??? entity
-?   ??? Veiculo.java
-??? exception
-?   ??? BusinessException.java
-?   ??? ResourceNotFoundException.java
-?   ??? GlobalExceptionHandler.java
-??? repository
-?   ??? VeiculoRepository.java
-??? service
-?   ??? VeiculoService.java
-?   ??? impl
-?       ??? VeiculoServiceImpl.java
-??? integration
-?   ??? DollarExchangeService.java
-??? security
-    ??? JwtAuthenticationFilter.java
-    ??? JwtTokenProvider.java
-    ??? UserRoles.java
-```
-
-Princípios aplicados:
-
-* **SRP**: cada classe tem uma única responsabilidade
-* **DIP**: controllers dependem de interfaces
-* **Open/Closed**: regras extensíveis sem modificar código existente
+Este projeto foi desenvolvido como parte do **desafio técnico da Tinnova**, utilizando **Java 17**, **Spring Boot 3**, **JWT**, **OpenAPI**, **JUnit/Mockito** e aplicando princípios de **SOLID** e **Clean Code**.
 
 ---
 
-## ? Entidade Veículo (Requisitos Tinnova)
+## ? Objetivo
 
-```java
-@Entity
-@Table(name = "veiculos", uniqueConstraints = @UniqueConstraint(columnNames = "placa"))
-public class Veiculo {
+Disponibilizar uma API REST para gerenciamento de veículos, com:
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+* CRUD completo
+* Filtros avançados
+* Relatórios
+* Autenticação e autorização via JWT
+* Documentação OpenAPI (Swagger)
+* Testes automatizados com cobertura ? 75%
 
-    private String marca;
-    private String modelo;
-    private String cor;
-    private Integer ano;
-    private String placa;
+---
 
-    private BigDecimal precoDolar;
+## ?? Tecnologias Utilizadas
 
-    private Boolean ativo = true;
-}
+* **Java 17**
+* **Spring Boot 3**
+* Spring Web
+* Spring Data JPA
+* Spring Security (JWT)
+* H2 Database
+* Redis (cache)
+* OpenAPI 3 (Swagger)
+* JUnit 5
+* Mockito
+* JaCoCo
+* Docker (Redis)
+
+---
+
+## ? Arquitetura
+
+O projeto segue uma arquitetura em camadas:
+
+```
+controller  ?  service  ?  repository
+                 ?
+               domain
+```
+
+Principais conceitos aplicados:
+
+* SOLID
+* Clean Code
+* DTOs para entrada e saída
+* Soft Delete
+* Separação de responsabilidades
+
+---
+
+## ? Segurança (JWT)
+
+* Autenticação via `/auth/login`
+* Autorização baseada em roles:
+
+    * `USER`: leitura
+    * `ADMIN`: escrita (POST, PUT, PATCH, DELETE)
+
+O token JWT deve ser enviado no header:
+
+```
+Authorization: Bearer <token>
 ```
 
 ---
 
-## ? DTOs
+## ? Documentação da API (Swagger)
 
-### VeiculoRequestDTO
+A API é totalmente documentada com **OpenAPI 3**.
 
-```java
-public record VeiculoRequestDTO(
-        String marca,
-        String modelo,
-        String cor,
-        Integer ano,
-        String placa,
-        BigDecimal precoEmReais
-) {}
-```
-
-### VeiculoResponseDTO
-
-```java
-public record VeiculoResponseDTO(
-        Long id,
-        String marca,
-        String modelo,
-        String cor,
-        Integer ano,
-        String placa,
-        BigDecimal precoDolar
-) {}
-```
-
----
-
-## ? Integração ? Cotação do Dólar
-
-```java
-public interface DollarExchangeService {
-    BigDecimal getDollarRate();
-}
-```
-
-Implementação:
-
-* API principal: AwesomeAPI
-* Fallback: Frankfurter
-* Cache Redis (TTL configurável)
-
----
-
-## ?? Service
-
-```java
-public interface VeiculoService {
-    VeiculoResponseDTO criar(VeiculoRequestDTO dto);
-    Page<VeiculoResponseDTO> listar(FiltroVeiculo filtro, Pageable pageable);
-    VeiculoResponseDTO buscarPorId(Long id);
-    VeiculoResponseDTO atualizar(Long id, VeiculoRequestDTO dto);
-    void remover(Long id);
-}
-```
-
-Validações:
-
-* Placa única
-* PUT/PATCH inválidos
-* Soft delete (ativo = false)
-
----
-
-## ? Controller (Endpoints do Desafio Tinnova)
-
-```java
-@RestController
-@RequestMapping("/veiculos")
-@SecurityRequirement(name = "bearerAuth")
-public class VeiculoController {
-
-    private final VeiculoService service;
-
-    @PostMapping
-    @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<VeiculoResponseDTO> criar(@RequestBody @Valid VeiculoRequestDTO dto) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(service.criar(dto));
-    }
-
-    @GetMapping
-    @PreAuthorize("hasAnyRole('USER','ADMIN')")
-    public Page<VeiculoResponseDTO> listar(Pageable pageable) {
-        return service.listar(null, pageable);
-    }
-}
-```
-
----
-
-## ? Segurança (USER / ADMIN ? JWT)
-
-* JWT Bearer Token
-* Roles: USER e ADMIN
-* Filtros por endpoint
-
-```java
-.antMatchers(HttpMethod.POST, "/veiculos").hasRole("ADMIN")
-.antMatchers(HttpMethod.GET, "/veiculos/**").hasAnyRole("USER","ADMIN")
-```
-
----
-
-## ? Testes Automatizados (Conforme Avaliação Tinnova)
-
-### Service (JUnit + Mockito)
-
-```java
-@Test
-void deveLancarErroQuandoPlacaDuplicada() {
-    when(repository.existsByPlaca("ABC1234")).thenReturn(true);
-    assertThrows(BusinessException.class, () -> service.criar(dto));
-}
-```
-
-### Controller
-
-* 401 não autenticado
-* 403 acesso negado
-* 409 conflito de placa
-
-### Integração (@SpringBootTest)
-
-Fluxo:
-
-1. Obter token
-2. Criar veículo (ADMIN)
-3. Listar
-4. Buscar por ID
-
----
-
-## ? OpenAPI / Swagger
-
-Disponível em:
+### ? Acesso
 
 ```
 http://localhost:8080/swagger-ui.html
 ```
 
-Inclui:
+---
 
-* JWT Bearer Auth
-* Documentação completa dos endpoints
+### ? Prints do Swagger
+
+#### ? Tela inicial da documentação
+
+![Swagger Home](docs/swagger/swagger-home.png)
+
+#### ? Endpoint de Login (JWT)
+
+![Swagger Login](docs/swagger/swagger-login.png)
+
+#### ? Cadastro de Veículo (ADMIN)
+
+![Swagger Post Veiculo](docs/swagger/swagger-post-veiculo.png)
+
+#### ? Relatório por Marca
+
+![Swagger Relatorio](docs/swagger/swagger-relatorio-marca.png)
+
+> ? **Observação:**
+> Os arquivos de imagem devem ser colocados em:
+>
+> ```
+> docs/swagger/
+> ```
+
+---
+
+## ? Endpoints Principais
+
+### Veículos
+
+* `GET /veiculos`
+* `GET /veiculos/{id}`
+* `POST /veiculos` (ADMIN)
+* `PUT /veiculos/{id}` (ADMIN)
+* `PATCH /veiculos/{id}` (ADMIN)
+* `DELETE /veiculos/{id}` (ADMIN ? soft delete)
+* `GET /veiculos/relatorios/por-marca`
+
+### Autenticação
+
+* `POST /auth/login`
+
+---
+
+## ? Testes e Cobertura
+
+* Testes unitários
+* Testes de controller
+* Testes de integração com JWT
+* Banco H2 em memória
+* Cobertura com **JaCoCo ? 75%**
+
+### Executar testes
+
+```bash
+mvn clean verify
+```
+
+### Relatório de cobertura
+
+```
+target/site/jacoco/index.html
+```
+
+---
+
+## ? Redis (Cache)
+
+O Redis é utilizado para cache de dados externos (ex: cotação do dólar).
+
+### Subir Redis com Docker
+
+```bash
+docker run -d --name redis -p 6379:6379 redis:7-alpine
+```
 
 ---
 
 ## ?? Executando o Projeto
 
 ```bash
-mvn clean install
 mvn spring-boot:run
 ```
 
-H2 Console:
+A aplicação estará disponível em:
 
 ```
-http://localhost:8080/h2-console
+http://localhost:8080
 ```
 
 ---
 
-## ? Diferenciais
+## ? Autor
 
-* Clean Code
-* SOLID
-* Soft delete
-* Cache Redis
-* Testes de integração
-* API documentada
+**Diego Cunha**
+Analista Desenvolvedor Java
+
+Projeto desenvolvido com foco em boas práticas, clareza de código e padrões exigidos em ambientes corporativos.
 
 ---
 
-## ? Próximos Passos (Extras Opcionais)
+## ? Status do Projeto
 
-* Docker Compose (API + Redis)
-* CI com GitHub Actions
-* Cobertura Jacoco ? 75%
-
----
-
-??? Autor: Diego Cunha
-
-? **Desafio Técnico:** Tinnova ? Avaliação de Candidato
-
+? Desafio técnico finalizado
+? Todos os requisitos atendidos
+? Pronto para avaliação
